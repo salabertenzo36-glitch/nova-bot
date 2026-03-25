@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nova.com • Fonctionnalites</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="features">
+    <div class="site">
+      <header class="header">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">N</span>
+          <span>nova.com</span>
+        </a>
+        <nav class="nav">
+          <a data-nav="home" href="./index.html">Accueil</a>
+          <a data-nav="features" href="./features.html">Fonctionnalites</a>
+          <a data-nav="commands" href="./commands.html">Commandes</a>
+          <a data-nav="support" href="./support.html">Support</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="button ghost" data-support-link href="https://discord.gg/8eFmauxrNg" target="_blank" rel="noreferrer">Support</a>
+          <a class="button primary" data-invite-link href="#" target="_blank" rel="noreferrer">Ajouter</a>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="page-intro">
+          <p class="kicker">Fonctionnalites</p>
+          <h1>Ce que Nova gere deja sur nova.com.</h1>
+        </section>
+
+        <section class="card-grid">
+          <article class="panel">
+            <h2>Moderation</h2>
+            <p>.ban, .kick, .warn, .mute, .unmute, .purge, .lock, historique et logs.</p>
+          </article>
+          <article class="panel">
+            <h2>Tickets</h2>
+            <p>Panel unique, configuration rapide, claim, fermeture, role staff et salon logs.</p>
+          </article>
+          <article class="panel">
+            <h2>IA locale</h2>
+            <p>Reponses par mention du bot et par commande grace a Ollama.</p>
+          </article>
+          <article class="panel">
+            <h2>Utilitaires</h2>
+            <p>Infos serveur, texte, hash, encodage, random, embeds et outils pratiques.</p>
+          </article>
+          <article class="panel">
+            <h2>Fun</h2>
+            <p>Interactions, hasard, mini-jeux, profils et commandes pour animer le serveur.</p>
+          </article>
+          <article class="panel">
+            <h2>Support central</h2>
+            <p>Liens directs pour inviter le bot, rejoindre le serveur support et assister les admins.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

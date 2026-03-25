@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nova.com • Accueil</title>
+    <meta
+      name="description"
+      content="nova.com presente Nova, un bot Discord public minimaliste avec moderation, tickets et IA locale."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="home">
+    <div class="site">
+      <header class="header">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">N</span>
+          <span>nova.com</span>
+        </a>
+        <nav class="nav">
+          <a data-nav="home" href="./index.html">Accueil</a>
+          <a data-nav="features" href="./features.html">Fonctionnalites</a>
+          <a data-nav="commands" href="./commands.html">Commandes</a>
+          <a data-nav="support" href="./support.html">Support</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="button ghost" data-support-link href="https://discord.gg/8eFmauxrNg" target="_blank" rel="noreferrer">Support</a>
+          <a class="button primary" data-invite-link href="#" target="_blank" rel="noreferrer">Ajouter</a>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="hero-minimal">
+          <p class="kicker">Bot Discord public</p>
+          <h1>nova.com presente un bot simple pour la moderation, le support et l'IA locale.</h1>
+          <p class="lede">
+            Un bot propre pour les serveurs qui veulent des tickets, de la moderation concrete,
+            des utilitaires et une IA via Ollama sans usine a gaz.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary large" data-invite-link href="#" target="_blank" rel="noreferrer">Ajouter Nova</a>
+            <a class="button subtle large" href="./commands.html">Voir les commandes</a>
+          </div>
+        </section>
+
+        <section class="stats-row">
+          <article class="stat-card">
+            <span>Prefixe</span>
+            <strong>.</strong>
+          </article>
+          <article class="stat-card">
+            <span>IA</span>
+            <strong>Ollama</strong>
+          </article>
+          <article class="stat-card">
+            <span>Tickets</span>
+            <strong>Panel unique</strong>
+          </article>
+          <article class="stat-card">
+            <span>Catalogue</span>
+            <strong>500+ commandes</strong>
+          </article>
+        </section>
+
+        <section class="two-column">
+          <article class="panel">
+            <p class="kicker">Pourquoi nova.com</p>
+            <h2>Un bot net, rapide, sans interface confuse.</h2>
+            <p>
+              Nova regroupe les actions essentielles d'un serveur public: sanctions,
+              logs, tickets support, commandes staff, commandes utilitaires et IA.
+            </p>
+          </article>
+          <article class="panel code-panel">
+            <p><span>.warn</span> @member spam</p>
+            <p><span>.ticketsetup post</span></p>
+            <p><span>@Nova</span> comment ouvrir un ticket ?</p>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

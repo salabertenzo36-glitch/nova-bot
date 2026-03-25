@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nova.com • Support</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="support">
+    <div class="site">
+      <header class="header">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">N</span>
+          <span>nova.com</span>
+        </a>
+        <nav class="nav">
+          <a data-nav="home" href="./index.html">Accueil</a>
+          <a data-nav="features" href="./features.html">Fonctionnalites</a>
+          <a data-nav="commands" href="./commands.html">Commandes</a>
+          <a data-nav="support" href="./support.html">Support</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="button ghost" data-support-link href="https://discord.gg/8eFmauxrNg" target="_blank" rel="noreferrer">Support</a>
+          <a class="button primary" data-invite-link href="#" target="_blank" rel="noreferrer">Ajouter</a>
+        </div>
+      </header>
+
+      <main class="container">
+        <section class="page-intro">
+          <p class="kicker">Support</p>
+          <h1>Invite Nova ou rejoins le support depuis nova.com.</h1>
+        </section>
+
+        <section class="card-grid">
+          <article class="panel">
+            <h2>Ajouter le bot</h2>
+            <p>Invite Nova sur ton serveur Discord avec le lien officiel.</p>
+            <a class="button primary large" data-invite-link href="#" target="_blank" rel="noreferrer">Ajouter Nova</a>
+          </article>
+          <article class="panel">
+            <h2>Serveur support</h2>
+            <p>Rejoins le Discord support pour l'aide, les tests et les mises a jour.</p>
+            <a class="button subtle large" data-support-link href="https://discord.gg/8eFmauxrNg" target="_blank" rel="noreferrer">Rejoindre le support</a>
+          </article>
+          <article class="panel">
+            <h2>Liens rapides</h2>
+            <p id="client-id-label">Client ID: 1486449971967562010</p>
+            <button class="button ghost large" id="copy-invite-button" type="button">Copier le lien d'invitation</button>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

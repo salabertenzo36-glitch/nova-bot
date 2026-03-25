@@ -1,0 +1,30 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/website/index.html"
+    },
+    {
+      "source": "/features",
+      "destination": "/website/features.html"
+    },
+    {
+      "source": "/commands",
+      "destination": "/website/commands.html"
+    },
+    {
+      "source": "/support",
+      "destination": "/website/support.html"
+    },
+    {
+      "source": "/styles.css",
+      "destination": "/website/styles.css"
+    },
+    {
+      "source": "/app.js",
+      "destination": "/website/app.js"
+    }
+  ]
+}
