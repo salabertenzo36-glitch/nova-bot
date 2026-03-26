@@ -251,6 +251,85 @@ code {
   gap: 18px;
 }
 
+.dashboard-top {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 22px;
+}
+
+.dashboard-search-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.dashboard-search {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.server-grid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.server-card {
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.server-card h3 {
+  margin: 4px 0 0;
+  font-size: 1.4rem;
+}
+
+.server-card-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.server-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 10px;
+  box-shadow: 0 0 0 6px rgba(91, 162, 255, 0.12);
+}
+
+.server-dot.online {
+  background: #4ade80;
+}
+
+.server-dot.idle {
+  background: #f59e0b;
+}
+
+.server-meta {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.server-chip-row {
+  margin-top: 14px;
+}
+
 .catalog-sidebar {
   display: grid;
   gap: 10px;
@@ -471,7 +550,9 @@ code {
   .card-grid,
   .list-layout,
   .catalog-shell,
-  .catalog-items {
+  .catalog-items,
+  .dashboard-top,
+  .server-grid {
     grid-template-columns: 1fr;
   }
 

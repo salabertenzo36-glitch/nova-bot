@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>nova.com • Support</title>
+    <title>nova.com • Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body data-page="support">
+  <body data-page="dashboard">
     <div class="site">
       <header class="header">
         <a class="brand" href="./index.html">
@@ -34,44 +34,53 @@
 
       <main class="container">
         <section class="page-intro">
-          <p class="kicker">Support</p>
-          <h1>Invite Nova ou rejoins le support depuis nova.com.</h1>
+          <p class="kicker">Dashboard</p>
+          <h1>Les serveurs ou Nova est presente.</h1>
+          <p class="lede">
+            Cette page montre un dashboard visuel des serveurs relies. Pour du vrai live, il faudra brancher une API plus tard, mais la structure est deja prete.
+          </p>
         </section>
 
-        <section class="card-grid">
-          <article class="panel">
-            <h2>Ajouter le bot</h2>
-            <p>Invite Nova sur ton serveur Discord avec le lien officiel.</p>
-            <a class="button primary large" data-invite-link href="#" target="_blank" rel="noreferrer">Ajouter Nova</a>
+        <section class="dashboard-top">
+          <article class="stat-card">
+            <span>Serveurs</span>
+            <strong>12</strong>
           </article>
-          <article class="panel">
-            <h2>Serveur support</h2>
-            <p>Rejoins le Discord support pour l'aide, les tests et les mises a jour.</p>
-            <a class="button subtle large" data-support-link href="https://discord.gg/8eFmauxrNg" target="_blank" rel="noreferrer">Rejoindre le support</a>
+          <article class="stat-card">
+            <span>Membres couverts</span>
+            <strong>18.4k</strong>
           </article>
-          <article class="panel">
-            <h2>Liens rapides</h2>
-            <p id="client-id-label">Client ID: 1486449971967562010</p>
-            <button class="button ghost large" id="copy-invite-button" type="button">Copier le lien d'invitation</button>
+          <article class="stat-card">
+            <span>Status</span>
+            <strong>En ligne</strong>
+          </article>
+          <article class="stat-card">
+            <span>Mode IA</span>
+            <strong>Ollama</strong>
           </article>
         </section>
 
         <section class="panel">
-          <p class="kicker">FAQ rapide</p>
-          <div class="faq-list">
+          <div class="catalog-panel-head">
             <div>
-              <h2>Comment ouvrir un ticket ?</h2>
-              <p>Utilise le panel ticket ou demande au staff de faire <code>+ticketsetup post</code>.</p>
-            </div>
-            <div>
-              <h2>Comment parler a l'IA ?</h2>
-              <p>Mentionne <code>@Nova</code> ou utilise <code>+ai-ask</code>.</p>
-            </div>
-            <div>
-              <h2>Comment voir les commandes ?</h2>
-              <p>Va sur la page Commandes ou utilise <code>+help</code> directement sur Discord.</p>
+              <p class="kicker">Recherche</p>
+              <h2>Filtrer les serveurs</h2>
             </div>
           </div>
+          <div class="dashboard-search-row">
+            <input id="server-search" class="dashboard-search" type="search" placeholder="Chercher un serveur..." />
+            <span class="catalog-count" id="server-count">0 serveur</span>
+          </div>
+        </section>
+
+        <section class="server-grid" id="server-grid"></section>
+
+        <section class="panel">
+          <p class="kicker">Note</p>
+          <h2>Comment brancher le vrai dashboard</h2>
+          <p>
+            Pour afficher les vrais serveurs en direct, il faudra ajouter une petite API qui lit les guildes du bot puis renvoie les donnees au site. La mise en page est deja prete pour ca.
+          </p>
         </section>
       </main>
     </div>

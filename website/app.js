@@ -160,6 +160,45 @@ const commandCatalog = {
   }
 };
 
+const serverDashboard = [
+  {
+    name: "Yuren",
+    id: "1482339195346358333",
+    members: "1.2k",
+    status: "Actif",
+    modules: ["Tickets", "Moderation", "IA"],
+    support: "#support",
+    color: "online"
+  },
+  {
+    name: "Nova Support",
+    id: "112233445566778899",
+    members: "840",
+    status: "Actif",
+    modules: ["Tickets", "Bridge", "Fun"],
+    support: "#ticket-logs",
+    color: "online"
+  },
+  {
+    name: "Creator Hub",
+    id: "223344556677889900",
+    members: "2.8k",
+    status: "Actif",
+    modules: ["Moderation", "Utilitaire", "IA"],
+    support: "#help",
+    color: "online"
+  },
+  {
+    name: "Community FR",
+    id: "334455667788990011",
+    members: "6.5k",
+    status: "En attente",
+    modules: ["Tickets", "Fun", "Bridge"],
+    support: "#support",
+    color: "idle"
+  }
+];
+
 function renderCatalog(group) {
   const data = commandCatalog[group] ?? commandCatalog.moderation;
   const kicker = document.getElementById("catalog-kicker");
@@ -201,4 +240,51 @@ if (catalogButtons.length) {
   }
 
   renderCatalog("moderation");
+}
+
+const serverGrid = document.getElementById("server-grid");
+const serverSearch = document.getElementById("server-search");
+const serverCount = document.getElementById("server-count");
+
+function renderDashboard(filter = "") {
+  if (!serverGrid || !serverCount) {
+    return;
+  }
+
+  const query = filter.trim().toLowerCase();
+  const filtered = serverDashboard.filter((server) => {
+    return (
+      server.name.toLowerCase().includes(query) ||
+      server.id.includes(query) ||
+      server.modules.some((module) => module.toLowerCase().includes(query))
+    );
+  });
+
+  serverCount.textContent = `${filtered.length} serveur${filtered.length > 1 ? "s" : ""}`;
+  serverGrid.innerHTML = filtered
+    .map(
+      (server) => `
+        <article class="server-card">
+          <div class="server-card-top">
+            <div>
+              <p class="kicker">${server.status}</p>
+              <h3>${server.name}</h3>
+            </div>
+            <span class="server-dot ${server.color}"></span>
+          </div>
+          <p class="server-meta">ID: ${server.id}</p>
+          <p class="server-meta">Membres: ${server.members}</p>
+          <p class="server-meta">Salon support: ${server.support}</p>
+          <div class="chip-row server-chip-row">
+            ${server.modules.map((module) => `<span class="chip">${module}</span>`).join("")}
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+if (serverGrid && serverSearch) {
+  renderDashboard();
+  serverSearch.addEventListener("input", () => renderDashboard(serverSearch.value));
 }
