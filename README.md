@@ -46,6 +46,9 @@ cp .env.example .env
 - `DISCORD_DEV_GUILD_ID` pour tester vite sur un serveur
 - `OLLAMA_BASE_URL` pour l'instance Ollama
 - `OLLAMA_MODEL` pour le modele local
+- `DASHBOARD_API_PORT` pour l'API JSON du dashboard local
+- `DASHBOARD_SYNC_URL` pour envoyer les stats du bot vers Vercel
+- `DASHBOARD_SYNC_SECRET` pour proteger la synchronisation
 
 4. Installer et lancer Ollama:
 
@@ -70,9 +73,25 @@ npm run deploy:commands
 
 Le site inclut un dashboard Vercel qui lit une API JSON.
 
-Si tu veux des informations reelles, configure une source publique dans Vercel:
+Le bot expose aussi une API locale:
 
-- `DASHBOARD_SOURCE_URL`
+- `GET /api/dashboard` sur `http://127.0.0.1:3005` par defaut
+
+Pour un dashboard reel en restant sur Vercel:
+
+1. Configure sur Vercel:
+
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+- `DASHBOARD_SYNC_SECRET`
+- `DASHBOARD_SNAPSHOT_KEY` si tu veux changer la cle
+
+2. Configure dans le bot local:
+
+- `DASHBOARD_SYNC_URL=https://ton-projet.vercel.app/api/dashboard-sync`
+- `DASHBOARD_SYNC_SECRET` avec la meme valeur que sur Vercel
+
+Le bot pousse alors ses stats vers Vercel, et le dashboard lit ensuite `/api/dashboard`.
 
 Format attendu par l'API:
 
@@ -93,7 +112,8 @@ Format attendu par l'API:
     "guilds": 12,
     "members": 48210,
     "activeModules": 6,
-    "ticketsOpen": 3
+    "ticketsOpen": 3,
+    "bridgeChannels": 2
   },
   "servers": [
     {
@@ -109,7 +129,7 @@ Format attendu par l'API:
 }
 ```
 
-Sans source configuree, le dashboard affiche une vue de secours propre.
+Sans synchro configuree, le dashboard affiche une vue de secours propre.
 
 ## Site public
 

@@ -65,6 +65,10 @@
               <span>Modules actifs</span>
               <strong id="dashboard-module-count">0</strong>
             </div>
+            <div class="dashboard-hero-stat">
+              <span>Panels tickets</span>
+              <strong id="dashboard-ticket-count">0</strong>
+            </div>
           </article>
         </section>
 
@@ -84,6 +88,10 @@
           <article class="stat-card">
             <span>Mode IA</span>
             <strong id="dashboard-stat-ai">Ollama</strong>
+          </article>
+          <article class="stat-card">
+            <span>Bridge</span>
+            <strong id="dashboard-stat-bridge">0</strong>
           </article>
         </section>
 
@@ -123,8 +131,9 @@
           <p class="kicker">Note</p>
           <h2>Brancher les donnees reelles</h2>
           <p>
-            Configure `DASHBOARD_SOURCE_URL` sur Vercel pour pointer vers une API JSON qui renvoie les serveurs du bot.
-            La page consomme deja ce format, affiche clairement quand la source est live, et bascule automatiquement sur une vue de secours si besoin.
+            Configure `KV_REST_API_URL`, `KV_REST_API_TOKEN` et `DASHBOARD_SYNC_SECRET` sur Vercel.
+            Puis, dans le bot, mets `DASHBOARD_SYNC_URL` sur l'URL de `https://ton-projet.vercel.app/api/dashboard-sync`.
+            La page lit ensuite les vraies stats depuis `/api/dashboard` et bascule automatiquement sur une vue de secours si besoin.
           </p>
         </section>
       </main>

@@ -181,6 +181,7 @@ const dashboardFallback = {
     members: 12480,
     activeModules: 6,
     ticketsOpen: 12,
+    bridgeChannels: 2,
   },
   servers: [
     {
@@ -362,10 +363,12 @@ function renderDashboard(data) {
   setTextContent("dashboard-guild-count", formatCompactNumber(current.stats?.guilds ?? 0));
   setTextContent("dashboard-member-count", formatCompactNumber(current.stats?.members ?? 0));
   setTextContent("dashboard-module-count", formatCompactNumber(current.stats?.activeModules ?? 0));
+  setTextContent("dashboard-ticket-count", formatCompactNumber(current.stats?.ticketsOpen ?? 0));
   setTextContent("dashboard-stat-guilds", formatNumber(current.stats?.guilds ?? 0));
   setTextContent("dashboard-stat-members", formatNumber(current.stats?.members ?? 0));
   setTextContent("dashboard-stat-status", live ? "Connecté" : "Démo");
   setTextContent("dashboard-stat-ai", current.bot?.aiModel ?? "Ollama");
+  setTextContent("dashboard-stat-bridge", formatNumber(current.stats?.bridgeChannels ?? 0));
   setTextContent(
     "dashboard-last-sync",
     `Dernière synchronisation: ${formatDashboardDate(current.updatedAt)}`
