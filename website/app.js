@@ -38,3 +38,21 @@ if (copyInviteButton) {
     }
   });
 }
+
+const copyPrefixButton = document.getElementById("copy-prefix-button");
+if (copyPrefixButton) {
+  copyPrefixButton.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText("+");
+      copyPrefixButton.textContent = "Prefixe copie";
+      setTimeout(() => {
+        copyPrefixButton.textContent = "Copier le prefixe +";
+      }, 1800);
+    } catch {
+      copyPrefixButton.textContent = "Copie impossible";
+      setTimeout(() => {
+        copyPrefixButton.textContent = "Copier le prefixe +";
+      }, 1800);
+    }
+  });
+}

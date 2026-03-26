@@ -10,6 +10,13 @@ import {
 import { getTicketConfig } from "../features/tickets/ticket-config.js";
 import type { BotClient } from "../lib/bot-client.js";
 
+function interactionEmbed(title: string, description: string, color = 0x5865f2): EmbedBuilder {
+  return new EmbedBuilder()
+    .setTitle(title.slice(0, 256))
+    .setDescription(description.slice(0, 4096))
+    .setColor(color);
+}
+
 export function registerInteractionCreateEvent(client: BotClient): void {
   client.on("interactionCreate", async (interaction) => {
     try {
@@ -17,7 +24,7 @@ export function registerInteractionCreateEvent(client: BotClient): void {
         const command = client.commands.get(interaction.commandName);
         if (!command) {
           await interaction.reply({
-            content: "Commande introuvable.",
+            embeds: [interactionEmbed("Commande", "Commande introuvable.", 0xed4245)],
             ephemeral: true
           });
           return;
@@ -29,7 +36,10 @@ export function registerInteractionCreateEvent(client: BotClient): void {
 
       if (interaction.isButton() && interaction.customId === "ticket:create") {
         if (!interaction.guild || !interaction.channel) {
-          await interaction.reply({ content: "Contexte invalide.", ephemeral: true });
+          await interaction.reply({
+            embeds: [interactionEmbed("Ticket", "Contexte invalide.", 0xed4245)],
+            ephemeral: true
+          });
           return;
         }
 
@@ -115,7 +125,7 @@ export function registerInteractionCreateEvent(client: BotClient): void {
         }
 
         await interaction.reply({
-          content: `Ticket cree: <#${channel.id}>`,
+          embeds: [interactionEmbed("Ticket", `Ticket cree: <#${channel.id}>`, 0x3ba55d)],
           ephemeral: true
         });
         return;
@@ -123,18 +133,27 @@ export function registerInteractionCreateEvent(client: BotClient): void {
 
       if (interaction.isButton() && interaction.customId === "ticket:claim") {
         if (!interaction.channel || !("setName" in interaction.channel)) {
-          await interaction.reply({ content: "Salon incompatible.", ephemeral: true });
+          await interaction.reply({
+            embeds: [interactionEmbed("Ticket", "Salon incompatible.", 0xed4245)],
+            ephemeral: true
+          });
           return;
         }
 
         const nextName = `claimed-${interaction.channel.name}`.slice(0, 90);
         await interaction.channel.setName(nextName).catch(() => null);
-        await interaction.reply({ content: `Ticket claim par <@${interaction.user.id}>.`, ephemeral: false });
+        await interaction.reply({
+          embeds: [interactionEmbed("Ticket", `Ticket claim par <@${interaction.user.id}>.`, 0x3ba55d)],
+          ephemeral: false
+        });
         return;
       }
 
       if (interaction.isButton() && interaction.customId === "ticket:close") {
-        await interaction.reply({ content: "Fermeture du ticket...", ephemeral: true });
+        await interaction.reply({
+          embeds: [interactionEmbed("Ticket", "Fermeture du ticket...", 0x3ba55d)],
+          ephemeral: true
+        });
         await interaction.channel?.delete();
       }
     } catch (error) {
@@ -142,7 +161,7 @@ export function registerInteractionCreateEvent(client: BotClient): void {
 
       if (interaction.isRepliable()) {
         const payload = {
-          content: "Une erreur est survenue pendant l'execution.",
+          embeds: [interactionEmbed("Erreur", "Une erreur est survenue pendant l'execution.", 0xed4245)],
           ephemeral: true
         };
 

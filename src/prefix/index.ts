@@ -3,7 +3,7 @@ import { Collection } from "discord.js";
 import { createPrefixedCommandsCache } from "./shared.js";
 import type { PrefixCommand } from "../types/prefix-command.js";
 
-export const prefix = ".";
+export const prefix = "+";
 
 export function buildPrefixCommandMap(): Collection<string, PrefixCommand> {
   const commands = new Collection<string, PrefixCommand>();

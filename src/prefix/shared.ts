@@ -18,7 +18,10 @@ import { getTicketPanel, registerTicketPanel } from "../features/tickets/ticket-
 import type { PrefixCommand, PrefixCommandContext } from "../types/prefix-command.js";
 
 export function makeEmbed(title: string, description: string, color = 0x5865f2): EmbedBuilder {
-  return new EmbedBuilder().setTitle(title).setDescription(description).setColor(color);
+  return new EmbedBuilder()
+    .setTitle(title.slice(0, 256))
+    .setDescription(description.slice(0, 4096))
+    .setColor(color);
 }
 
 export async function replyEmbed(
@@ -496,7 +499,7 @@ async function ticketHandler(kind: string, context: PrefixCommandContext): Promi
   if (kind === "add" || kind === "remove") {
     const member = message.mentions.members?.first();
     if (!member || !("permissionOverwrites" in message.channel)) {
-      await replyEmbed(context, "Ticket", `Usage: .ticket${kind} @membre`, 0xed4245);
+      await replyEmbed(context, "Ticket", `Usage: +ticket${kind} @membre`, 0xed4245);
       return;
     }
     await message.channel.permissionOverwrites.edit(member.id, {
@@ -633,7 +636,7 @@ async function coreHandler(kind: string, context: PrefixCommandContext): Promise
   if (kind === "giveaway-join") {
     const id = args[0];
     if (!id) {
-      await replyEmbed(context, "Giveaway", "Usage: .giveaway-join <id>", 0xed4245);
+      await replyEmbed(context, "Giveaway", "Usage: +giveaway-join <id>", 0xed4245);
       return;
     }
     const joined = await joinGiveaway(id, message.author.id);
@@ -679,7 +682,7 @@ async function coreHandler(kind: string, context: PrefixCommandContext): Promise
     }
     const value = args[0] as "balanced" | "strict" | "friendly" | "developer" | "short" | undefined;
     if (!value) {
-      await replyEmbed(context, "Nova AI", "Usage: .ai-style balanced|strict|friendly|developer|short", 0xed4245);
+      await replyEmbed(context, "Nova AI", "Usage: +ai-style balanced|strict|friendly|developer|short", 0xed4245);
       return;
     }
     await updateGuildAiSettings(message.guild.id, { style: value });
@@ -746,13 +749,13 @@ export function createPrefixedCommands(): PrefixCommand[] {
             makeEmbed(
               `Help • .${exact.name}`,
               [
-                `**Categorie**: ${title(exact.category)}`,
-                `**Description**: ${exact.description}`,
-                `**Usage**: ${exact.usage ?? `.${exact.name}`}`,
-                `**Aliases**: ${(exact.aliases?.length ? exact.aliases.map((alias) => `.${alias}`).join(", ") : "Aucun")}`,
-                `**Permissions**: ${(exact.permissions?.length ? exact.permissions.join(", ") : "Aucune")}`
-              ].join("\n")
-            )
+              `**Categorie**: ${title(exact.category)}`,
+              `**Description**: ${exact.description}`,
+              `**Usage**: ${exact.usage ?? `+${exact.name}`}`,
+              `**Aliases**: ${(exact.aliases?.length ? exact.aliases.map((alias) => `+${alias}`).join(", ") : "Aucun")}`,
+              `**Permissions**: ${(exact.permissions?.length ? exact.permissions.join(", ") : "Aucune")}`
+            ].join("\n")
+          )
           ]
         });
         return;
@@ -773,10 +776,10 @@ export function createPrefixedCommands(): PrefixCommand[] {
             chunk
               .map((command) =>
                 [
-                  `\`.${command.name}\``,
+                  `\`+${command.name}\``,
                   `${command.description}`,
                   command.usage ? `Usage: \`${command.usage}\`` : null,
-                  command.aliases?.length ? `Alias: ${command.aliases.map((alias) => `.${alias}`).join(", ")}` : null
+                  command.aliases?.length ? `Alias: ${command.aliases.map((alias) => `+${alias}`).join(", ")}` : null
                 ]
                   .filter(Boolean)
                   .join("\n")
@@ -790,7 +793,7 @@ export function createPrefixedCommands(): PrefixCommand[] {
 
     const summary = [...groups.entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([category, entries]) => `${categoryEmoji(category)} **${title(category)}** • ${entries.length} commandes\nEx: \`.help ${category}\``)
+      .map(([category, entries]) => `${categoryEmoji(category)} **${title(category)}** • ${entries.length} commandes\nEx: \`+help ${category}\``)
       .join("\n\n");
 
     await context.message.reply({
@@ -798,19 +801,19 @@ export function createPrefixedCommands(): PrefixCommand[] {
         makeEmbed(
           "📚 Help",
           [
-            "Utilise `.help categorie` pour voir une categorie.",
-            "Utilise `.help commande` pour voir une commande precise.",
+            "Utilise `+help categorie` pour voir une categorie.",
+            "Utilise `+help commande` pour voir une commande precise.",
             "",
             summary,
             "",
             `Commande totale: ${createPrefixedCommandsCache.length}`,
-            "Prefixe: `.`",
-            "Exemples: `.help moderation`, `.help warn`, `.help tickets 2`"
+            "Prefixe: `+`",
+            "Exemples: `+help moderation`, `+help warn`, `+help tickets 2`"
           ].join("\n")
         )
       ]
     });
-  }, ["commands", "h"], undefined, ".help [categorie] [page]");
+  }, ["commands", "h"], undefined, "+help [categorie] [page]");
 
   for (const name of ["ping", "bridge-add", "bridge-remove", "bridge-list", "giveaway-create", "giveaway-join", "ai-ask", "ai-reset", "ai-status", "ai-style", "ai-cooldown", "ai-mentions"]) {
     const permissions =
@@ -819,7 +822,7 @@ export function createPrefixedCommands(): PrefixCommand[] {
         : name === "ai-style" || name === "ai-cooldown" || name === "ai-mentions"
           ? [PermissionFlagsBits.ManageGuild]
           : undefined;
-    add(name, "core", title(name), (context) => coreHandler(name, context), name === "ping" ? ["p"] : [], permissions, `.${name}`);
+    add(name, "core", title(name), (context) => coreHandler(name, context), name === "ping" ? ["p"] : [], permissions, `+${name}`);
   }
 
   const modNames = [
@@ -830,7 +833,7 @@ export function createPrefixedCommands(): PrefixCommand[] {
     "automod-anti-link","automod-anti-invite","automod-anti-spam","automod-anti-caps","automod-anti-mention","automod-anti-emoji","automod-anti-zalgo","automod-anti-phishing","automod-anti-token","automod-anti-raid","automod-anti-join-spam","automod-anti-webhook","automod-anti-massban","automod-anti-massrole","automod-anti-selfbot","automod-whitelist-add","automod-whitelist-remove","automod-exempt-role-add","automod-exempt-role-remove","automod-threshold-spam","automod-threshold-caps","automod-threshold-mention","automod-punishment","automod-status","automod-reset",
     "log-joins","log-leaves","log-messages","log-edits","log-deletes","log-voice","log-roles","log-channels","log-automod","log-tickets","log-giveaways","log-mod-actions","log-errors","log-warnings","log-reports","log-starboard","log-members","log-server","log-webhooks","log-nicknames","log-avatars","log-threads","log-reactions","log-status","log-export"
   ];
-  for (const name of modNames) add(name, "moderation", title(name), (context) => moderationHandler(name, context), name === "warn" || name === "kick" || name === "ban" || name === "mute" || name === "unmute" || name === "purge" ? [name.replace(/-.+$/, "")] : [], [PermissionFlagsBits.ManageMessages], `.${name}`);
+  for (const name of modNames) add(name, "moderation", title(name), (context) => moderationHandler(name, context), name === "warn" || name === "kick" || name === "ban" || name === "mute" || name === "unmute" || name === "purge" ? [name.replace(/-.+$/, "")] : [], [PermissionFlagsBits.ManageMessages], `+${name}`);
 
   const ticketNames = [
     "setup","close","claim","add","remove",
@@ -855,7 +858,7 @@ export function createPrefixedCommands(): PrefixCommand[] {
               : name === "remove"
                 ? ["ticketremove"]
                 : [];
-    add(`ticket-${name}`, "tickets", title(name), (context) => ticketHandler(name, context), aliases, [PermissionFlagsBits.ManageChannels], `.ticket-${name}`);
+    add(`ticket-${name}`, "tickets", title(name), (context) => ticketHandler(name, context), aliases, [PermissionFlagsBits.ManageChannels], `+ticket-${name}`);
   }
 
   const utilNames = [
@@ -865,7 +868,7 @@ export function createPrefixedCommands(): PrefixCommand[] {
     "poll","remind","countdown","embed","webhook-check","role-id","channel-id","emoji-id","server-id","user-id","message-id","permissions-check","invite-check","clean-empty-roles","welcome-preview","goodbye-preview","autorole-preview","ticket-stats","giveaway-stats","backup","restore","snapshot","clone-settings","move-messages","counter-refresh",
     "calc","dice","coinflip","8ball","timestamp","random-number","random-color","random-emoji","random-member","random-role","random-channel","compare","split","join","replace","remove","pad","truncate","palindrome","vowels","consonants","anagram","frequency","wrap","inspect"
   ];
-  for (const name of utilNames) add(name, "utility", title(name), (context) => utilHandler(name, context), [], undefined, `.${name}`);
+  for (const name of utilNames) add(name, "utility", title(name), (context) => utilHandler(name, context), [], undefined, `+${name}`);
 
   const funNames = [
     "hug","pat","slap","bite","kiss","cuddle","punch","tickle","poke","stare","highfive","wave","roast","compliment","simp","gayrate","smart-rate","chaos-rate","vibe-check","ship","marry","divorce","adopt","steal-heart","steal-fries",
@@ -884,7 +887,7 @@ export function createPrefixedCommands(): PrefixCommand[] {
       runtimeName === "hug" || runtimeName === "ship" || runtimeName === "rps" || runtimeName === "meme"
         ? [handlerName]
         : [];
-    add(runtimeName, "fun", title(handlerName), (context) => funHandler(handlerName, context), aliases, undefined, `.${runtimeName}`);
+    add(runtimeName, "fun", title(handlerName), (context) => funHandler(handlerName, context), aliases, undefined, `+${runtimeName}`);
   }
 
   return commands;

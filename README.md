@@ -130,12 +130,12 @@ Nova supporte maintenant:
 
 Commandes utiles:
 
-- `/ai ask`
-- `/ai reset`
-- `/ai status`
-- `/ai style`
-- `/ai cooldown`
-- `/ai mentions`
+- `+ai-ask`
+- `+ai-reset`
+- `+ai-status`
+- `+ai-style`
+- `+ai-cooldown`
+- `+ai-mentions`
 
 ## Base conseillee pour 500+ features
 
