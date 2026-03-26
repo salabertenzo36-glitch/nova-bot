@@ -21,6 +21,8 @@ if (activePage) {
   activeLink?.classList.add("active");
 }
 
+const dashboardPage = activePage === "dashboard";
+
 const copyInviteButton = document.getElementById("copy-invite-button");
 if (copyInviteButton) {
   copyInviteButton.addEventListener("click", async () => {
@@ -160,44 +162,254 @@ const commandCatalog = {
   }
 };
 
-const serverDashboard = [
-  {
-    name: "Yuren",
-    id: "1482339195346358333",
-    members: "1.2k",
-    status: "Actif",
-    modules: ["Tickets", "Moderation", "IA"],
-    support: "#support",
-    color: "online"
+const dashboardFallback = {
+  live: false,
+  source: "demo",
+  sourceUrl: null,
+  updatedAt: new Date().toISOString(),
+  bot: {
+    name: "Nova",
+    status: "Mode démonstration",
+    prefix: "+",
+    aiModel: "Ollama",
+    aiStatus: "Démo",
+    latencyMs: null,
+    modules: ["Moderation", "Tickets", "IA", "Utilitaire", "Fun", "Bridge"],
   },
-  {
-    name: "Nova Support",
-    id: "112233445566778899",
-    members: "840",
-    status: "Actif",
-    modules: ["Tickets", "Bridge", "Fun"],
-    support: "#ticket-logs",
-    color: "online"
+  stats: {
+    guilds: 4,
+    members: 12480,
+    activeModules: 6,
+    ticketsOpen: 12,
   },
-  {
-    name: "Creator Hub",
-    id: "223344556677889900",
-    members: "2.8k",
-    status: "Actif",
-    modules: ["Moderation", "Utilitaire", "IA"],
-    support: "#help",
-    color: "online"
-  },
-  {
-    name: "Community FR",
-    id: "334455667788990011",
-    members: "6.5k",
-    status: "En attente",
-    modules: ["Tickets", "Fun", "Bridge"],
-    support: "#support",
-    color: "idle"
+  servers: [
+    {
+      id: "1482339195346358333",
+      name: "Yuren",
+      members: 1280,
+      status: "Actif",
+      support: "#support",
+      color: "online",
+      modules: ["Tickets", "Moderation", "IA"],
+    },
+    {
+      id: "112233445566778899",
+      name: "Nova Support",
+      members: 840,
+      status: "Actif",
+      support: "#ticket-logs",
+      color: "online",
+      modules: ["Tickets", "Bridge", "Fun"],
+    },
+    {
+      id: "223344556677889900",
+      name: "Creator Hub",
+      members: 2840,
+      status: "Actif",
+      support: "#help",
+      color: "online",
+      modules: ["Moderation", "Utilitaire", "IA"],
+    },
+    {
+      id: "334455667788990011",
+      name: "Community FR",
+      members: 6520,
+      status: "En attente",
+      support: "#support",
+      color: "idle",
+      modules: ["Tickets", "Fun", "Bridge"],
+    },
+  ],
+};
+
+const dashboardState = {
+  data: dashboardFallback,
+};
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => {
+    switch (character) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case '"':
+        return "&quot;";
+      case "'":
+        return "&#39;";
+      default:
+        return character;
+    }
+  });
+}
+
+function formatNumber(value) {
+  const numeric = Number(value);
+  return new Intl.NumberFormat("fr-FR").format(Number.isFinite(numeric) ? numeric : 0);
+}
+
+function formatCompactNumber(value) {
+  const numeric = Number(value);
+  return new Intl.NumberFormat("fr-FR", {
+    notation: "compact",
+    compactDisplay: "short",
+  }).format(Number.isFinite(numeric) ? numeric : 0);
+}
+
+function formatDashboardDate(iso) {
+  if (!iso) {
+    return "en attente";
   }
-];
+
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return "en attente";
+  }
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function setTextContent(id, value) {
+  const node = document.getElementById(id);
+  if (node) {
+    node.textContent = value;
+  }
+}
+
+function renderDashboardCards(filter = "") {
+  if (!serverGrid || !serverCount) {
+    return;
+  }
+
+  const data = dashboardState.data ?? dashboardFallback;
+  const query = filter.trim().toLowerCase();
+  const filtered = data.servers.filter((server) => {
+    return (
+      server.name.toLowerCase().includes(query) ||
+      server.id.includes(query) ||
+      server.support.toLowerCase().includes(query) ||
+      server.modules.some((module) => module.toLowerCase().includes(query))
+    );
+  });
+
+  serverCount.textContent = `${filtered.length} serveur${filtered.length > 1 ? "s" : ""}`;
+
+  if (!filtered.length) {
+    serverGrid.classList.add("empty");
+    serverGrid.innerHTML = `
+      <article class="dashboard-empty">
+        <h3>Aucun serveur trouvé</h3>
+        <p>Essaie un autre nom, un salon, un module ou vide la recherche.</p>
+      </article>
+    `;
+    return;
+  }
+
+  serverGrid.classList.remove("empty");
+  serverGrid.innerHTML = filtered
+    .map((server) => {
+      const modules = server.modules
+        .map((module) => `<span class="chip">${escapeHtml(module)}</span>`)
+        .join("");
+      return `
+        <article class="server-card">
+          <div class="server-card-top">
+            <div>
+              <p class="kicker">${escapeHtml(server.status)}</p>
+              <h3>${escapeHtml(server.name)}</h3>
+            </div>
+            <span class="server-dot ${escapeHtml(server.color)}"></span>
+          </div>
+          <p class="server-meta">ID: ${escapeHtml(server.id)}</p>
+          <p class="server-meta">Membres: ${formatNumber(server.members)}</p>
+          <p class="server-meta">Salon support: ${escapeHtml(server.support)}</p>
+          <div class="chip-row server-chip-row">${modules}</div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function renderDashboard(data) {
+  const current = data ?? dashboardFallback;
+  dashboardState.data = current;
+
+  const live = Boolean(current.live);
+  let sourceLabel = live ? "API live" : "Démo";
+  if (current.sourceUrl) {
+    try {
+      sourceLabel = new URL(current.sourceUrl).hostname;
+    } catch {
+      sourceLabel = current.sourceUrl;
+    }
+  }
+  const sourceStatus = live ? "Source live" : current.source === "fallback" ? "Source secours" : "Mode démonstration";
+
+  setTextContent("dashboard-bot-name", current.bot?.name ?? "Nova");
+  setTextContent(
+    "dashboard-bot-status",
+    live
+      ? `${current.bot?.status ?? "En ligne"} · Prefixe ${current.bot?.prefix ?? "+"} · IA ${current.bot?.aiModel ?? "Ollama"}`
+      : `${current.bot?.status ?? "Mode démonstration"} · la source live n'est pas encore branchée.`
+  );
+  setTextContent("dashboard-live-badge", live ? "Source live" : sourceStatus);
+  setTextContent("dashboard-source-badge", `Source: ${sourceLabel}`);
+  setTextContent("dashboard-guild-count", formatCompactNumber(current.stats?.guilds ?? 0));
+  setTextContent("dashboard-member-count", formatCompactNumber(current.stats?.members ?? 0));
+  setTextContent("dashboard-module-count", formatCompactNumber(current.stats?.activeModules ?? 0));
+  setTextContent("dashboard-stat-guilds", formatNumber(current.stats?.guilds ?? 0));
+  setTextContent("dashboard-stat-members", formatNumber(current.stats?.members ?? 0));
+  setTextContent("dashboard-stat-status", live ? "Connecté" : "Démo");
+  setTextContent("dashboard-stat-ai", current.bot?.aiModel ?? "Ollama");
+  setTextContent(
+    "dashboard-last-sync",
+    `Dernière synchronisation: ${formatDashboardDate(current.updatedAt)}`
+  );
+
+  const liveBadge = document.getElementById("dashboard-live-badge");
+  if (liveBadge) {
+    liveBadge.classList.toggle("live", live);
+    liveBadge.classList.toggle("demo", !live);
+    liveBadge.classList.toggle("warning", !live && current.source === "fallback");
+  }
+
+  renderDashboardCards(serverSearch?.value ?? "");
+}
+
+async function loadDashboard() {
+  if (!serverGrid) {
+    return;
+  }
+
+  const loadingState = {
+    ...dashboardFallback,
+    bot: {
+      ...dashboardFallback.bot,
+      status: "Chargement des donnees live",
+    },
+  };
+  renderDashboard(loadingState);
+
+  try {
+    const response = await fetch("/api/dashboard", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`API dashboard indisponible (${response.status})`);
+    }
+
+    const payload = await response.json();
+    renderDashboard(payload);
+  } catch {
+    renderDashboard(dashboardFallback);
+  }
+}
 
 function renderCatalog(group) {
   const data = commandCatalog[group] ?? commandCatalog.moderation;
@@ -246,45 +458,7 @@ const serverGrid = document.getElementById("server-grid");
 const serverSearch = document.getElementById("server-search");
 const serverCount = document.getElementById("server-count");
 
-function renderDashboard(filter = "") {
-  if (!serverGrid || !serverCount) {
-    return;
-  }
-
-  const query = filter.trim().toLowerCase();
-  const filtered = serverDashboard.filter((server) => {
-    return (
-      server.name.toLowerCase().includes(query) ||
-      server.id.includes(query) ||
-      server.modules.some((module) => module.toLowerCase().includes(query))
-    );
-  });
-
-  serverCount.textContent = `${filtered.length} serveur${filtered.length > 1 ? "s" : ""}`;
-  serverGrid.innerHTML = filtered
-    .map(
-      (server) => `
-        <article class="server-card">
-          <div class="server-card-top">
-            <div>
-              <p class="kicker">${server.status}</p>
-              <h3>${server.name}</h3>
-            </div>
-            <span class="server-dot ${server.color}"></span>
-          </div>
-          <p class="server-meta">ID: ${server.id}</p>
-          <p class="server-meta">Membres: ${server.members}</p>
-          <p class="server-meta">Salon support: ${server.support}</p>
-          <div class="chip-row server-chip-row">
-            ${server.modules.map((module) => `<span class="chip">${module}</span>`).join("")}
-          </div>
-        </article>
-      `
-    )
-    .join("");
-}
-
-if (serverGrid && serverSearch) {
-  renderDashboard();
-  serverSearch.addEventListener("input", () => renderDashboard(serverSearch.value));
+if (dashboardPage && serverGrid && serverSearch && serverCount) {
+  loadDashboard();
+  serverSearch.addEventListener("input", () => renderDashboardCards(serverSearch.value));
 }

@@ -66,6 +66,51 @@ npm run dev
 npm run deploy:commands
 ```
 
+## Dashboard public
+
+Le site inclut un dashboard Vercel qui lit une API JSON.
+
+Si tu veux des informations reelles, configure une source publique dans Vercel:
+
+- `DASHBOARD_SOURCE_URL`
+
+Format attendu par l'API:
+
+```json
+{
+  "live": true,
+  "source": "bot-feed",
+  "updatedAt": "2026-03-26T18:00:00.000Z",
+  "bot": {
+    "name": "Nova",
+    "status": "En ligne",
+    "prefix": "+",
+    "aiModel": "llama3.2:3b",
+    "aiStatus": "Active",
+    "modules": ["Moderation", "Tickets", "IA"]
+  },
+  "stats": {
+    "guilds": 12,
+    "members": 48210,
+    "activeModules": 6,
+    "ticketsOpen": 3
+  },
+  "servers": [
+    {
+      "id": "123",
+      "name": "Serveur exemple",
+      "members": 1200,
+      "status": "Actif",
+      "support": "#support",
+      "color": "online",
+      "modules": ["Tickets", "Moderation", "IA"]
+    }
+  ]
+}
+```
+
+Sans source configuree, le dashboard affiche une vue de secours propre.
+
 ## Site public
 
 Le site statique est dans `website/`.

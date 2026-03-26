@@ -35,28 +35,55 @@
       <main class="container">
         <section class="page-intro">
           <p class="kicker">Dashboard</p>
-          <h1>Les serveurs ou Nova est presente, en un coup d'oeil.</h1>
+          <h1>Les serveurs où Nova est présente, en un coup d'oeil.</h1>
           <p class="lede">
-            Cette page affiche un dashboard visuel clair des serveurs relies. Pour du vrai live, il faudra brancher une API plus tard, mais la structure est deja prete.
+            Cette page lit une API live pour afficher les serveurs, les membres et les modules actifs. Si la source n'est pas branchee, une vue de secours propre s'affiche automatiquement.
           </p>
+        </section>
+
+        <section class="dashboard-hero">
+          <article class="panel dashboard-hero-main">
+            <p class="kicker">Vue live</p>
+            <h2 id="dashboard-bot-name">Nova</h2>
+            <p id="dashboard-bot-status" class="lede">Chargement des donnees en cours...</p>
+            <div class="hero-actions">
+              <span class="server-pill live" id="dashboard-live-badge">API en lecture</span>
+              <span class="server-pill" id="dashboard-source-badge">Source: inconnue</span>
+            </div>
+            <p class="dashboard-sync" id="dashboard-last-sync">Derniere synchronisation: en attente...</p>
+          </article>
+          <article class="panel dashboard-hero-side">
+            <div class="dashboard-hero-stat">
+              <span>Serveurs</span>
+              <strong id="dashboard-guild-count">0</strong>
+            </div>
+            <div class="dashboard-hero-stat">
+              <span>Membres couverts</span>
+              <strong id="dashboard-member-count">0</strong>
+            </div>
+            <div class="dashboard-hero-stat">
+              <span>Modules actifs</span>
+              <strong id="dashboard-module-count">0</strong>
+            </div>
+          </article>
         </section>
 
         <section class="dashboard-top">
           <article class="stat-card">
             <span>Serveurs</span>
-            <strong>12</strong>
+            <strong id="dashboard-stat-guilds">0</strong>
           </article>
           <article class="stat-card">
             <span>Membres couverts</span>
-            <strong>18.4k</strong>
+            <strong id="dashboard-stat-members">0</strong>
           </article>
           <article class="stat-card">
             <span>Status</span>
-            <strong>En ligne</strong>
+            <strong id="dashboard-stat-status">Chargement</strong>
           </article>
           <article class="stat-card">
             <span>Mode IA</span>
-            <strong>Ollama</strong>
+            <strong id="dashboard-stat-ai">Ollama</strong>
           </article>
         </section>
 
@@ -94,9 +121,10 @@
 
         <section class="panel">
           <p class="kicker">Note</p>
-          <h2>Comment brancher le vrai dashboard</h2>
+          <h2>Brancher les donnees reelles</h2>
           <p>
-            Pour afficher les vrais serveurs en direct, il faudra ajouter une petite API qui lit les guildes du bot puis renvoie les donnees au site. La mise en page est deja prete pour ca.
+            Configure `DASHBOARD_SOURCE_URL` sur Vercel pour pointer vers une API JSON qui renvoie les serveurs du bot.
+            La page consomme deja ce format, affiche clairement quand la source est live, et bascule automatiquement sur une vue de secours si besoin.
           </p>
         </section>
       </main>
