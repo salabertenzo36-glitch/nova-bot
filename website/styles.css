@@ -258,6 +258,83 @@ code {
   margin-top: 22px;
 }
 
+.dashboard-preview {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 18px;
+}
+
+.dashboard-feature,
+.dashboard-mini {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 28px;
+  padding: 26px;
+  backdrop-filter: blur(16px);
+}
+
+.dashboard-mini-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.dashboard-mini-top span {
+  color: var(--muted);
+}
+
+.dashboard-mini-list {
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-mini-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+}
+
+.dashboard-mini-card h3 {
+  margin: 0 0 4px;
+}
+
+.dashboard-mini-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.server-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.server-pill.online {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.dashboard-highlight {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
 .dashboard-search-row {
   display: flex;
   align-items: center;
@@ -552,6 +629,8 @@ code {
   .catalog-shell,
   .catalog-items,
   .dashboard-top,
+  .dashboard-preview,
+  .dashboard-highlight,
   .server-grid {
     grid-template-columns: 1fr;
   }

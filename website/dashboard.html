@@ -35,9 +35,9 @@
       <main class="container">
         <section class="page-intro">
           <p class="kicker">Dashboard</p>
-          <h1>Les serveurs ou Nova est presente.</h1>
+          <h1>Les serveurs ou Nova est presente, en un coup d'oeil.</h1>
           <p class="lede">
-            Cette page montre un dashboard visuel des serveurs relies. Pour du vrai live, il faudra brancher une API plus tard, mais la structure est deja prete.
+            Cette page affiche un dashboard visuel clair des serveurs relies. Pour du vrai live, il faudra brancher une API plus tard, mais la structure est deja prete.
           </p>
         </section>
 
@@ -71,6 +71,23 @@
             <input id="server-search" class="dashboard-search" type="search" placeholder="Chercher un serveur..." />
             <span class="catalog-count" id="server-count">0 serveur</span>
           </div>
+        </section>
+
+        <section class="dashboard-highlight">
+          <article class="panel dashboard-highlight-card">
+            <p class="kicker">Vue principale</p>
+            <h2>Tout ce qu'il faut voir tout de suite.</h2>
+            <p>
+              Les cartes ci-dessous regroupent les serveurs, les modules actifs, le statut et le support associe.
+            </p>
+          </article>
+          <article class="panel dashboard-highlight-card">
+            <p class="kicker">Etat</p>
+            <h2>Infos lisibles et rapides.</h2>
+            <p>
+              Le dashboard est pense pour etre utilise comme une console de lecture simple pour Nova.
+            </p>
+          </article>
         </section>
 
         <section class="server-grid" id="server-grid"></section>
