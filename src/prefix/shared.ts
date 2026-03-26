@@ -24,6 +24,59 @@ export function makeEmbed(title: string, description: string, color = 0x5865f2):
     .setColor(color);
 }
 
+function parseHexColor(input?: string): number {
+  if (!input) {
+    return 0x5865f2;
+  }
+
+  const normalized = input.trim().replace(/^#/, "");
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+    return 0x5865f2;
+  }
+
+  return Number.parseInt(normalized, 16);
+}
+
+function buildTicketPanelEmbed(config: Awaited<ReturnType<typeof getTicketConfig>>): EmbedBuilder {
+  const color = parseHexColor(config.texts["panel.color"]);
+  const titleText = config.texts["panel.title"] || "Support";
+  const descriptionText = config.texts["panel.description"] || "Clique pour ouvrir un ticket.";
+  const noteText = config.texts["panel.note"] || "Explique ton probleme clairement pour avoir une reponse plus rapide.";
+  const footerText = config.texts["panel.footer"] || "Nova Support";
+
+  const embed = makeEmbed(titleText, descriptionText, color)
+    .addFields({
+      name: "Informations",
+      value: noteText.slice(0, 1024)
+    })
+    .setFooter({ text: footerText.slice(0, 2048) });
+
+  return embed;
+}
+
+function buildTicketOpenEmbed(
+  config: Awaited<ReturnType<typeof getTicketConfig>>,
+  userId: string
+): EmbedBuilder {
+  const color = parseHexColor(config.texts["panel.color"]);
+  const roleLine = config.texts["setup.staffrole"] ? `Staff: <@&${config.texts["setup.staffrole"]}>` : "Staff: non defini";
+  const transcriptLine = `Transcripts: ${(config.booleans["setup.transcript"] ?? false) ? "on" : "off"}`;
+
+  return makeEmbed(
+    config.texts["ticket.welcome-title"] || "Ticket ouvert",
+    [
+      config.texts["ticket.welcome-description"] || "Merci d'expliquer ton besoin avec un maximum de details.",
+      "",
+      `Auteur: <@${userId}>`,
+      roleLine,
+      transcriptLine
+    ].join("\n"),
+    color
+  ).setFooter({
+    text: config.texts["panel.footer"] || "Nova Support"
+  });
+}
+
 export async function replyEmbed(
   context: PrefixCommandContext,
   title: string,
@@ -88,17 +141,17 @@ async function sendTicketPanel(
   }
 
   const config = await getTicketConfig(message.guild.id);
-  const titleText = config.texts["panel.title"] || "Support";
-  const descriptionText = config.texts["panel.description"] || "Clique pour ouvrir un ticket.";
   const buttonText = config.texts["panel.button-open"] || "Ouvrir un ticket";
+  const buttonEmoji = config.texts["panel.button-emoji"] || "🎫";
 
   const panelPayload = {
-    embeds: [makeEmbed(titleText, descriptionText)],
+    embeds: [buildTicketPanelEmbed(config)],
     components: [
       new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId("ticket:create")
           .setLabel(buttonText.slice(0, 80) || "Ouvrir un ticket")
+          .setEmoji(buttonEmoji)
           .setStyle(ButtonStyle.Primary)
       ).toJSON()
     ]
@@ -395,21 +448,33 @@ async function ticketHandler(kind: string, context: PrefixCommandContext): Promi
           `Titre: ${config.texts["panel.title"] ?? "Support"}`,
           `Description: ${config.texts["panel.description"] ?? "Clique pour ouvrir un ticket."}`,
           `Bouton: ${config.texts["panel.button-open"] ?? "Ouvrir un ticket"}`,
+          `Emoji bouton: ${config.texts["panel.button-emoji"] ?? "🎫"}`,
+          `Couleur: ${config.texts["panel.color"] ?? "#5865f2"}`,
+          `Note: ${config.texts["panel.note"] ?? "aucune"}`,
+          `Footer: ${config.texts["panel.footer"] ?? "Nova Support"}`,
+          `Titre ticket: ${config.texts["ticket.welcome-title"] ?? "Ticket ouvert"}`,
+          `Message ticket: ${config.texts["ticket.welcome-description"] ?? "Merci d'expliquer ton besoin avec un maximum de details."}`,
           `Categorie: ${config.texts["setup.category"] ?? "aucune"}`,
           `Role staff: ${config.texts["setup.staffrole"] ?? "aucun"}`,
           `Salon logs: ${config.texts["setup.logchannel"] ?? "aucun"}`,
           `Transcripts: ${(config.booleans["setup.transcript"] ?? false) ? "on" : "off"}`,
           "",
           "Actions:",
-          "`.ticketsetup title <texte>`",
-          "`.ticketsetup description <texte>`",
-          "`.ticketsetup button <texte>`",
-          "`.ticketsetup category #categorie`",
-          "`.ticketsetup staffrole @role`",
-          "`.ticketsetup logchannel #salon`",
-          "`.ticketsetup transcript on|off`",
-          "`.ticketsetup preview`",
-          "`.ticketsetup post`"
+          "`+ticketsetup title <texte>`",
+          "`+ticketsetup description <texte>`",
+          "`+ticketsetup note <texte>`",
+          "`+ticketsetup footer <texte>`",
+          "`+ticketsetup color #5865f2`",
+          "`+ticketsetup button <texte>`",
+          "`+ticketsetup emoji 🎫`",
+          "`+ticketsetup opentitle <texte>`",
+          "`+ticketsetup openmessage <texte>`",
+          "`+ticketsetup category #categorie`",
+          "`+ticketsetup staffrole @role`",
+          "`+ticketsetup logchannel #salon`",
+          "`+ticketsetup transcript on|off`",
+          "`+ticketsetup preview`",
+          "`+ticketsetup post`"
         ].join("\n")
       );
       return;
@@ -428,6 +493,46 @@ async function ticketHandler(kind: string, context: PrefixCommandContext): Promi
     if (action === "button") {
       await setTicketText(guildId, "panel.button-open", args.slice(1).join(" ").trim());
       await replyPrivateEmbed(context, "Ticket Setup", "Texte du bouton mis a jour.", 0x3ba55d);
+      return;
+    }
+    if (action === "emoji") {
+      const emoji = args[1]?.trim();
+      if (!emoji) {
+        await replyPrivateEmbed(context, "Ticket Setup", "Donne un emoji pour le bouton.", 0xed4245);
+        return;
+      }
+      await setTicketText(guildId, "panel.button-emoji", emoji);
+      await replyPrivateEmbed(context, "Ticket Setup", "Emoji du bouton mis a jour.", 0x3ba55d);
+      return;
+    }
+    if (action === "note") {
+      await setTicketText(guildId, "panel.note", args.slice(1).join(" ").trim());
+      await replyPrivateEmbed(context, "Ticket Setup", "Note du panel mise a jour.", 0x3ba55d);
+      return;
+    }
+    if (action === "footer") {
+      await setTicketText(guildId, "panel.footer", args.slice(1).join(" ").trim());
+      await replyPrivateEmbed(context, "Ticket Setup", "Footer du panel mis a jour.", 0x3ba55d);
+      return;
+    }
+    if (action === "color") {
+      const value = args[1]?.trim();
+      if (!value) {
+        await replyPrivateEmbed(context, "Ticket Setup", "Donne une couleur hex, par exemple `#5865f2`.", 0xed4245);
+        return;
+      }
+      await setTicketText(guildId, "panel.color", value);
+      await replyPrivateEmbed(context, "Ticket Setup", "Couleur du panel mise a jour.", 0x3ba55d);
+      return;
+    }
+    if (action === "opentitle") {
+      await setTicketText(guildId, "ticket.welcome-title", args.slice(1).join(" ").trim());
+      await replyPrivateEmbed(context, "Ticket Setup", "Titre du ticket mis a jour.", 0x3ba55d);
+      return;
+    }
+    if (action === "openmessage") {
+      await setTicketText(guildId, "ticket.welcome-description", args.slice(1).join(" ").trim());
+      await replyPrivateEmbed(context, "Ticket Setup", "Message d'accueil du ticket mis a jour.", 0x3ba55d);
       return;
     }
     if (action === "category") {

@@ -17,6 +17,41 @@ function interactionEmbed(title: string, description: string, color = 0x5865f2):
     .setColor(color);
 }
 
+function parseHexColor(input?: string): number {
+  if (!input) {
+    return 0x5865f2;
+  }
+
+  const normalized = input.trim().replace(/^#/, "");
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+    return 0x5865f2;
+  }
+
+  return Number.parseInt(normalized, 16);
+}
+
+function buildTicketWelcomeEmbed(config: Awaited<ReturnType<typeof getTicketConfig>>, userId: string): EmbedBuilder {
+  const color = parseHexColor(config.texts["panel.color"]);
+  const roleLine = config.texts["setup.staffrole"] ? `Staff: <@&${config.texts["setup.staffrole"]}>` : "Staff: non defini";
+  const transcriptLine = `Transcripts: ${(config.booleans["setup.transcript"] ?? false) ? "on" : "off"}`;
+
+  return new EmbedBuilder()
+    .setTitle(config.texts["ticket.welcome-title"] || "Ticket ouvert")
+    .setDescription(
+      [
+        config.texts["ticket.welcome-description"] || "Merci d'expliquer ton besoin avec un maximum de details.",
+        "",
+        `Auteur: <@${userId}>`,
+        roleLine,
+        transcriptLine
+      ].join("\n")
+    )
+    .setColor(color)
+    .setFooter({
+      text: config.texts["panel.footer"] || "Nova Support"
+    });
+}
+
 export function registerInteractionCreateEvent(client: BotClient): void {
   client.on("interactionCreate", async (interaction) => {
     try {
@@ -99,14 +134,7 @@ export function registerInteractionCreateEvent(client: BotClient): void {
         );
 
         await channel.send({
-          embeds: [
-            new EmbedBuilder()
-              .setTitle(config.texts["panel.title"] || "Support")
-              .setDescription(
-                `${config.texts["panel.description"] || "Merci de decrire ton probleme."}\n\nAuteur: <@${interaction.user.id}>`
-              )
-              .setColor(0x5865f2)
-          ],
+          embeds: [buildTicketWelcomeEmbed(config, interaction.user.id)],
           components: [closeRow]
         });
 
@@ -117,8 +145,8 @@ export function registerInteractionCreateEvent(client: BotClient): void {
               embeds: [
                 new EmbedBuilder()
                   .setTitle("Ticket Ouvert")
-                  .setDescription(`Auteur: <@${interaction.user.id}>\nSalon: <#${channel.id}>`)
-                  .setColor(0x3ba55d)
+                  .setDescription(`Auteur: <@${interaction.user.id}>\nSalon: <#${channel.id}>\nType: ${config.texts["panel.title"] || "Support"}`)
+                  .setColor(parseHexColor(config.texts["panel.color"]))
               ]
             }).catch(() => null);
           }

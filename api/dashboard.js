@@ -1,64 +1,27 @@
 const SNAPSHOT_KEY = process.env.DASHBOARD_SNAPSHOT_KEY || "nova:dashboard:snapshot";
 
-const DEMO_DATA = {
+const EMPTY_DATA = {
   live: false,
-  source: "demo",
+  source: "unconfigured",
   sourceUrl: null,
   updatedAt: new Date().toISOString(),
   bot: {
     name: "Nova",
-    status: "Mode demonstration",
+    status: "Aucune source live configuree",
     prefix: "+",
     aiModel: "Ollama",
-    aiStatus: "Demo",
+    aiStatus: "En attente",
     latencyMs: null,
-    modules: ["Moderation", "Tickets", "IA", "Utilitaire", "Fun", "Bridge"],
+    modules: [],
   },
   stats: {
-    guilds: 4,
-    members: 12480,
-    activeModules: 6,
-    ticketsOpen: 12,
-    bridgeChannels: 2,
+    guilds: 0,
+    members: 0,
+    activeModules: 0,
+    ticketsOpen: 0,
+    bridgeChannels: 0,
   },
-  servers: [
-    {
-      id: "1482339195346358333",
-      name: "Yuren",
-      members: 1280,
-      status: "Actif",
-      support: "#support",
-      color: "online",
-      modules: ["Tickets", "Moderation", "IA"],
-    },
-    {
-      id: "112233445566778899",
-      name: "Nova Support",
-      members: 840,
-      status: "Actif",
-      support: "#ticket-logs",
-      color: "online",
-      modules: ["Tickets", "Bridge", "Fun"],
-    },
-    {
-      id: "223344556677889900",
-      name: "Creator Hub",
-      members: 2840,
-      status: "Actif",
-      support: "#help",
-      color: "online",
-      modules: ["Moderation", "Utilitaire", "IA"],
-    },
-    {
-      id: "334455667788990011",
-      name: "Community FR",
-      members: 6520,
-      status: "En attente",
-      support: "#support",
-      color: "idle",
-      modules: ["Tickets", "Fun", "Bridge"],
-    },
-  ],
+  servers: [],
 };
 
 function sendJson(res, statusCode, payload) {
@@ -129,12 +92,12 @@ async function readExternalSource() {
 
 function normalizeSnapshot(payload) {
   if (!payload || typeof payload !== "object") {
-    return DEMO_DATA;
+    return EMPTY_DATA;
   }
 
-  const servers = Array.isArray(payload.servers) ? payload.servers : DEMO_DATA.servers;
-  const bot = payload.bot && typeof payload.bot === "object" ? payload.bot : DEMO_DATA.bot;
-  const stats = payload.stats && typeof payload.stats === "object" ? payload.stats : DEMO_DATA.stats;
+  const servers = Array.isArray(payload.servers) ? payload.servers : EMPTY_DATA.servers;
+  const bot = payload.bot && typeof payload.bot === "object" ? payload.bot : EMPTY_DATA.bot;
+  const stats = payload.stats && typeof payload.stats === "object" ? payload.stats : EMPTY_DATA.stats;
 
   return {
     live: payload.live !== false,
@@ -148,7 +111,7 @@ function normalizeSnapshot(payload) {
       aiModel: String(bot.aiModel || "Ollama"),
       aiStatus: String(bot.aiStatus || "Active"),
       latencyMs: bot.latencyMs == null ? null : Number(bot.latencyMs),
-      modules: Array.isArray(bot.modules) ? bot.modules : DEMO_DATA.bot.modules,
+      modules: Array.isArray(bot.modules) ? bot.modules : EMPTY_DATA.bot.modules,
     },
     stats: {
       guilds: Number(stats.guilds || servers.length),
@@ -189,5 +152,5 @@ export default async function handler(req, res) {
     return;
   }
 
-  sendJson(res, 200, DEMO_DATA);
+  sendJson(res, 200, EMPTY_DATA);
 }

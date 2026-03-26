@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder, type Message } from "discord.js";
 
 import { answerWithAi } from "../features/ai/ai-service.js";
 import { getGuildAiSettings } from "../features/ai/ai-settings.js";
@@ -12,6 +12,51 @@ function makeAiEmbed(title: string, description: string): EmbedBuilder {
   return makeEmbed(title, description, 0x5ba2ff).setFooter({
     text: "Nova AI"
   });
+}
+
+async function relayBridgeMessage(
+  client: BotClient,
+  message: Message<true>,
+  targetChannelId: string
+): Promise<void> {
+  const target = await client.channels.fetch(targetChannelId).catch(() => null);
+  if (!target || target.type !== ChannelType.GuildText) {
+    return;
+  }
+
+  const webhooks = await target.fetchWebhooks().catch(() => null);
+  if (!webhooks) {
+    return;
+  }
+
+  let webhook = webhooks.find((entry) => entry.owner?.id === client.user?.id && entry.name === "Nova Bridge");
+  if (!webhook) {
+    webhook = await target.createWebhook({
+      name: "Nova Bridge",
+      avatar: client.user?.displayAvatarURL() ?? undefined
+    }).catch(() => undefined);
+  }
+
+  if (!webhook) {
+    return;
+  }
+
+  const memberName =
+    message.member?.displayName ||
+    message.author.globalName ||
+    message.author.username;
+
+  const attachmentLinks = [...message.attachments.values()].map((attachment) => attachment.url);
+  const content = [message.content.trim(), ...attachmentLinks].filter(Boolean).join("\n").slice(0, 2000) || "*message sans texte*";
+
+  await webhook.send({
+    content,
+    username: `${memberName} • ${message.guild.name}`.slice(0, 80),
+    avatarURL: message.author.displayAvatarURL(),
+    allowedMentions: {
+      parse: []
+    }
+  }).catch(() => null);
 }
 
 export function registerMessageCreateEvent(client: BotClient): void {
@@ -28,21 +73,7 @@ export function registerMessageCreateEvent(client: BotClient): void {
           if (channelId === message.channelId) {
             continue;
           }
-
-          const target = await client.channels.fetch(channelId).catch(() => null);
-          if (!target || !("send" in target)) {
-            continue;
-          }
-
-          const embed = new EmbedBuilder()
-            .setAuthor({
-              name: `${message.author.username} • ${message.guild.name}`,
-              iconURL: message.author.displayAvatarURL()
-            })
-            .setDescription(message.content || "*message sans texte*")
-            .setTimestamp();
-
-          await target.send({ embeds: [embed] }).catch(() => null);
+          await relayBridgeMessage(client, message as Message<true>, channelId);
         }
       }
 

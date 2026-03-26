@@ -304,8 +304,12 @@ function renderDashboardCards(filter = "") {
     serverGrid.classList.add("empty");
     serverGrid.innerHTML = `
       <article class="dashboard-empty">
-        <h3>Aucun serveur trouvé</h3>
-        <p>Essaie un autre nom, un salon, un module ou vide la recherche.</p>
+        <h3>${data.live ? "Aucun serveur trouvé" : "Aucune source live connectée"}</h3>
+        <p>${
+          data.live
+            ? "Essaie un autre nom, un salon, un module ou vide la recherche."
+            : "Configure KV sur Vercel puis redéploie pour afficher les vraies données du bot."
+        }</p>
       </article>
     `;
     return;

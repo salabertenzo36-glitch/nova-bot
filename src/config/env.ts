@@ -17,5 +17,9 @@ export const env = {
   discordDevGuildId: process.env.DISCORD_DEV_GUILD_ID ?? "",
   founderId: process.env.FOUNDER_ID ?? "1167362445032050810",
   ollamaBaseUrl: process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434",
-  ollamaModel: process.env.OLLAMA_MODEL ?? "llama3.1:8b"
+  ollamaModel: process.env.OLLAMA_MODEL ?? "llama3.1:8b",
+  dashboardApiPort: Number(process.env.DASHBOARD_API_PORT ?? "3005"),
+  dashboardSyncUrl: process.env.DASHBOARD_SYNC_URL ?? "",
+  dashboardSyncSecret: process.env.DASHBOARD_SYNC_SECRET ?? "",
+  dashboardSnapshotKey: process.env.DASHBOARD_SNAPSHOT_KEY ?? "nova:dashboard:snapshot"
 };
